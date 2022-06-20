@@ -1,0 +1,32 @@
+hystrix:  
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000
+            
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: USERSERVICE
+        uri: lb://USERSERVICE
+        predicates:
+        - Path=/users/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: CircuitBreaker
+            fallbackUri: forward:/userServiceFallback
+            
+      - id: USERSERVICE
+        uri: lb://DEPARTMENTSERVICE
+        predicates:
+        - Path=/department/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: CircuitBreaker
+            fallbackUri: forward:/departmentServiceFallback
+            
